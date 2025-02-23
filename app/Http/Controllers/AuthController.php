@@ -25,28 +25,29 @@ class AuthController extends Controller
             'store_address'  => 'required|string|max:255',
             'password'       => 'required|string|min:6|confirmed',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-    
+
         // Create the store
         $store = Store::create([
             'store_name'    => $request->store_name,
             'store_address' => $request->store_address,
         ]);
-    
+
         // Create the user
         $user = User::create([
             'full_name' => $request->full_name,
             'phone'     => $request->phone,
             'password'  => Hash::make($request->password),
             'store_id'  => $store->id,
+            'is_admin' => $request->is_admin ?? false
         ]);
-    
+
         // Generate token immediately after registration
         $plainTextToken = $user->createToken('auth_token')->plainTextToken;
-    
+
         return response()->json([
             'message'      => 'User registered successfully',
             'user'         => $user,
@@ -55,7 +56,7 @@ class AuthController extends Controller
             'token_type'   => 'Bearer',
         ], 201);
     }
-    
+
 
     /**
      * Log in an existing user.

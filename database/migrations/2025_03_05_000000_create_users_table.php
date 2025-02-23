@@ -23,6 +23,8 @@ class CreateUsersTable extends Migration
             $table->foreign('store_id')
                   ->references('id')->on('stores')
                   ->onDelete('cascade');
+
+            $table->boolean('is_admin')->default(false);
         });
     }
 
